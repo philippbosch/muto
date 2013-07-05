@@ -1,1 +1,1 @@
-web:            gunicorn medmuseum.wsgi
+web:            gunicorn server:app
