@@ -36,6 +36,8 @@ class MutoClient:
     def __init__(self, api_endpoint):
         self.commands = []
         self.setup_commands()
+        self.format = None
+        self.compression_quality = None
         self.api_endpoint = api_endpoint
 
     def setup_commands(self):
@@ -74,8 +76,14 @@ class MutoClient:
         post_data = dict(
             source=self.source_url,
             commands=self.commands,
-            format='jpg'
+            opts={},
         )
+
+        if self.format is not None:
+            post_data['opts']['format'] = self.format
+
+        if self.compression_quality is not None:
+            post_data['opts']['compression_quality'] = self.compression_quality
 
         resp = requests.post(
             '%s/process' % self.api_endpoint,

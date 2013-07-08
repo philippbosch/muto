@@ -35,11 +35,13 @@ class MutoProcessor:
             if 'format' in opts:
                 image.format = opts['format']
 
-            if 'quality' in opts:
-                image.compression_quality = int(opts['quality'])
+            if 'compression_quality' in opts:
+                image.compression_quality = int(opts['compression_quality'])
 
             data['result'].update(self.metadata_for_image(image))
-            data['result']['url'] = self.store(image)
+            key = self.store(image)
+            data['result']['url'] = "http://%s/%s" % (key.bucket.name, key.key)
+            data['result']['filesize'] = key.size
 
         return data
 
@@ -59,14 +61,15 @@ class MutoProcessor:
         key = Key(bucket)
         file_name = self.get_result_filename(image)
         key.key = "%s.%s" % (file_name, image.format.lower())
+        blob = image.make_blob()
         key.set_contents_from_string(
-            image.make_blob(),
+            blob,
             headers={
                 'Content-Type': image.mimetype,
             }
         )
         key.make_public()
-        return "http://%s/%s" % (key.bucket.name, key.key)
+        return key
 
     def get_result_filename(self, image):
         return ''.join(random.choice(

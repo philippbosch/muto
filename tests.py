@@ -3,13 +3,14 @@ try:
 except ImportError:
     from StringIO import StringIO
 import unittest
+import magic
 from PIL import Image
 import requests
 import server
 from muto import MutoClient, MutoImage
 
 
-class MutoTestCase(unittest.TestCase):
+class MutoTestCaseBase(unittest.TestCase):
     TEST_IMAGES = [
         'https://muto-tests.s3.amazonaws.com/01.png',
         'https://muto-tests.s3.amazonaws.com/02.jpg',
@@ -30,6 +31,8 @@ class MutoTestCase(unittest.TestCase):
     def get_muto_client(self):
         return MutoClient('http://localhost:5000/api/v1')
 
+
+class MutoTestCase(MutoTestCaseBase):
     def test_noop_processing_from_url(self):
         client = self.get_muto_client()
         source_url = self.TEST_IMAGES[1]
@@ -130,5 +133,39 @@ class MutoTestCase(unittest.TestCase):
         self.assertEqual(result[1], h)
         self.assertEqual(pil_image.size[0], expected_width)
 
+    def test_quality(self):
+        client = self.get_muto_client()
+        source_url = self.TEST_IMAGES[0]
+        client.from_url(source_url)
+        client.format = 'jpg'
+
+        client.compression_quality = 100
+        high = client.process()
+
+        client.compression_quality = 1
+        low = client.process()
+
+        ratio = high.data['result']['filesize']/low.data['result']['filesize']
+        self.assertGreater(ratio, 10)
+
+    def test_format(self):
+        client = self.get_muto_client()
+        source_url = self.TEST_IMAGES[0]
+        client.from_url(source_url)
+
+        client.format = 'jpg'
+        img_jpg = client.process()
+        img_jpg_mime = magic.from_buffer(img_jpg.read(), mime=True)
+        self.assertEqual(img_jpg_mime, 'image/jpeg')
+
+        client.format = 'gif'
+        img_gif = client.process()
+        img_gif_mime = magic.from_buffer(img_gif.read(), mime=True)
+        self.assertEqual(img_gif_mime, 'image/gif')
+
+
+class MutoTinkerTestCase(MutoTestCaseBase):
+    pass
+
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(defaultTest='MutoTestCase')
