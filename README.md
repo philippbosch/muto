@@ -115,8 +115,8 @@ client = MutoClient(API_ENDPOINT)
 client.from_url('https://muto-tests.s3.amazonaws.com/test.jpg')
 client.resize(960, 540)
 client.format = 'png'
-client.process()
-print client.url  # => http://the-url-to-the-resulting-image.png
+image = client.process()
+print image.url  # => http://the-url-to-the-resulting-image.png
 ```
 
 
