@@ -26,7 +26,7 @@ Installation
 
 You can install the package from PyPI using pip or easy_install:
 
-    $ pip install Wand
+    $ pip install muto
 
 Or you can install from the latest source version:
 
