@@ -28,6 +28,14 @@ You can install the package from PyPI using pip or easy_install:
 
     $ pip install muto
 
+For the muto server, you need to install its dependencies:
+
+    $ pip install boto Flask requests Wand
+
+For the muto client, you need these dependencies:
+
+    $ pip install requests
+
 Or you can install from the latest source version:
 
     $ git clone git://github.com/philippbosch/muto.git
@@ -68,6 +76,28 @@ Then run the server like this:
 If you want it to listen on a port other than 5000, try this:
 
     $ PORT=8888 python server.py
+
+
+Quick install for a Heroku-based muto server
+============================================
+
+    $ mkdir mymuto
+    $ cd mymuto
+    $ git init
+    $ virtualenv venv
+    $ . venv/bin/activate
+    $ pip install muto
+    $ pip install boto Flask gunicorn requests Wand
+    $ pip freeze > requirements.txt
+    $ curl https://gist.github.com/philippbosch/5949419/raw/server.py > server.py
+    $ echo python-2.7.4 > runtime.txt
+    $ echo web: gunicorn server:app > Procfile
+    $ heroku create mymuto
+    $ git add .
+    $ git commit -m "initial commit"
+    $ heroku config add AWS_ACCESS_KEY_ID=<your aws access key id>
+    $ heroku config add AWS_SECRET_ACCESS_KEY=<your aws secret access key>
+    $ heroku config add AWS_STORAGE_BUCKET_NAME=<your S3 bucket>
 
 
 Using the muto client
