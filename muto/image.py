@@ -11,7 +11,7 @@ class MutoImage:
         if self.file is None:
             resp = requests.get(self.url, stream=True)
             self.file = resp.raw
-        return resp.raw.read(size)
+        return self.file.read(size)
 
     def readLine(self, size=None):
         raise NotImplemented

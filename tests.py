@@ -4,10 +4,14 @@ except ImportError:
     from StringIO import StringIO
 import unittest
 import magic
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 import requests
 import server
-from muto import MutoClient, MutoImage
+from muto.client import MutoClient
+from muto.image import MutoImage
 
 
 class MutoTestCaseBase(unittest.TestCase):
