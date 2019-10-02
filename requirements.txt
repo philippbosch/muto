@@ -3,7 +3,7 @@ Jinja2==2.7
 MarkupSafe==0.18
 PIL==1.1.7
 Wand==0.3.1
-Werkzeug==0.9.1
+Werkzeug==0.15.3
 boto==2.9.6
 distribute==0.6.34
 gunicorn==17.5
